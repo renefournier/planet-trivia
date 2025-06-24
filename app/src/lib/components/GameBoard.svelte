@@ -17,7 +17,7 @@
 	import { currentQuestion } from '$lib/stores/questions';
 	import { advanceTurn } from '$lib/utils/gameLogic';
 
-	let feedbackMessage: string = 'Answer the question above.';
+	let feedbackMessage: string = '';
 	let selectedAnswer: string | null = null;
 	let answeredCorrectly: boolean | null = null;
 
@@ -51,7 +51,7 @@
 	function nextQuestion() {
 		const wasCorrect = answeredCorrectly;
 
-		feedbackMessage = 'Answer the question above.';
+		feedbackMessage = '';
 		selectedAnswer = null;
 		answeredCorrectly = null;
 

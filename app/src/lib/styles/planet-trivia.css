@@ -50,7 +50,10 @@ html, body {
     justify-content: center;
     align-items: center;
     padding: 10px;
-    background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); /* Subtle gradient for premium feel */
+    background: linear-gradient(135deg, #6c6b6b 0%, #5b5b5b 100%); 
+    /* Subtle gradient for premium feel */
+    /* mono dark grey gradient */
+    
     color: white;
     text-align: center;
     box-shadow: 0 2px 5px var(--color-shadow);
@@ -193,7 +196,7 @@ html, body {
 }
 
 .player-name.active-player {
-    background-color: var(--color-geography); /* Example highlight */
+    background-color: #777;
     color: white;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
