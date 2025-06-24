@@ -6,7 +6,7 @@ export default defineConfig({
 	plugins: [sveltekit(), devtoolsJson()],
 	build: {
 		rollupOptions: {
-			external: ['@anthropic-ai/sdk']
+			external: ['@anthropic-ai/sdk', 'localforage']
 		}
 	},
 	test: {
