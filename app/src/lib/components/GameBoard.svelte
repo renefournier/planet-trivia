@@ -27,7 +27,7 @@
 
 		selectedAnswer = answer;
 		if (answer === question.correctAnswer) {
-			feedbackMessage = "✓ Correct! Player 1's turn";
+			feedbackMessage = `✓ Correct! Player ${get(gameState).currentPlayer}'s turn`;
 			answeredCorrectly = true;
 			// Update game state for correct answer
 			gameState.update((state) => {
@@ -43,7 +43,7 @@
 				return state;
 			});
 		} else {
-			feedbackMessage = `Incorrect. The correct answer was: ${question.correctAnswer}`;
+			feedbackMessage = `Incorrect. The correct answer was: ${question.correctAnswer}. Player ${get(gameState).currentPlayer === 1 ? 2 : 1}'s turn`;
 			answeredCorrectly = false;
 		}
 	}
@@ -68,27 +68,18 @@
 			let nextPlayer: 1 | 2 = advanceTurn(state.currentPlayer, wasAnswerCorrect);
 			let nextQuestionIndex = state.currentQuestionIndex;
 
-			// If the current player answered correctly, advance to the next question on the card.
-			// If they answered incorrectly, the question remains the same for the next player.
-			if (wasAnswerCorrect) {
-				nextQuestionIndex++;
-			}
+			// Always advance to the next question on the card, regardless of correctness.
+			nextQuestionIndex++;
 
 			// If all questions on the card are exhausted, set currentCard to null to trigger new card generation
 			if (card && nextQuestionIndex >= card.questions.length) {
 				currentQuestionCard.set(null);
 				nextQuestionIndex = 0; // Reset index for new card
+				currentQuestion.set(null); // Explicitly clear current question
 			}
 
 			state.currentPlayer = nextPlayer;
 			state.currentQuestionIndex = nextQuestionIndex;
-
-			// Update current question based on new index and card
-			if (card && card.questions[state.currentQuestionIndex]) {
-				currentQuestion.set(card.questions[state.currentQuestionIndex]);
-			} else {
-				currentQuestion.set(null); // No more questions on this card or new card needed
-			}
 
 			return state;
 		});
