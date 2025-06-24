@@ -48,7 +48,18 @@
 					class:correct={answeredCorrectly === true && selectedAnswer === option}
 					class:incorrect={answeredCorrectly === false && selectedAnswer === option}
 				>
-					{String.fromCharCode(65 + i)}) {option}
+					<span
+						class="option-prefix"
+						class:geography={currentCategory === CATEGORIES.GEOGRAPHY}
+						class:entertainment={currentCategory === CATEGORIES.ENTERTAINMENT}
+						class:history={currentCategory === CATEGORIES.HISTORY}
+						class:arts-literature={currentCategory === CATEGORIES.ARTS}
+						class:science-nature={currentCategory === CATEGORIES.SCIENCE}
+						class:sports-leisure={currentCategory === CATEGORIES.SPORTS}
+					>
+						{String.fromCharCode(65 + i)}
+					</span>
+					{option}
 				</button>
 			{/each}
 		</div>

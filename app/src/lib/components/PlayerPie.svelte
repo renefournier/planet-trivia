@@ -10,68 +10,6 @@
 <div class="player-section">
 	<div class="player-pie">
 		<svg viewBox="0 0 100 100" class="pie-chart">
-			<!-- Empty segments (outlines) -->
-			<circle
-				cx="50"
-				cy="50"
-				r="45"
-				fill="none"
-				stroke="var(--color-geography)"
-				stroke-width="10"
-				stroke-dasharray="15 85"
-				transform="rotate(-15 50 50)"
-			></circle>
-			<circle
-				cx="50"
-				cy="50"
-				r="45"
-				fill="none"
-				stroke="var(--color-entertainment)"
-				stroke-width="10"
-				stroke-dasharray="15 85"
-				transform="rotate(45 50 50)"
-			></circle>
-			<circle
-				cx="50"
-				cy="50"
-				r="45"
-				fill="none"
-				stroke="var(--color-history)"
-				stroke-width="10"
-				stroke-dasharray="15 85"
-				transform="rotate(105 50 50)"
-			></circle>
-			<circle
-				cx="50"
-				cy="50"
-				r="45"
-				fill="none"
-				stroke="var(--color-arts-literature)"
-				stroke-width="10"
-				stroke-dasharray="15 85"
-				transform="rotate(165 50 50)"
-			></circle>
-			<circle
-				cx="50"
-				cy="50"
-				r="45"
-				fill="none"
-				stroke="var(--color-science-nature)"
-				stroke-width="10"
-				stroke-dasharray="15 85"
-				transform="rotate(225 50 50)"
-			></circle>
-			<circle
-				cx="50"
-				cy="50"
-				r="45"
-				fill="none"
-				stroke="var(--color-sports-leisure)"
-				stroke-width="10"
-				stroke-dasharray="15 85"
-				transform="rotate(285 50 50)"
-			></circle>
-
 			<!-- Filled segments -->
 			{#each Object.entries(playerState.pieSegments) as [category, filled]}
 				{#if filled}
@@ -87,6 +25,16 @@
 					></path>
 				{/if}
 			{/each}
+
+			<!-- Base circle for the pie outline -->
+			<circle cx="50" cy="50" r="45" class="pie-outline"></circle>
+
+			<!-- Separator lines -->
+			<line x1="50" y1="5" x2="50" y2="95" class="pie-separator"></line>
+			<line x1="50" y1="5" x2="50" y2="95" class="pie-separator" transform="rotate(60 50 50)"
+			></line>
+			<line x1="50" y1="5" x2="50" y2="95" class="pie-separator" transform="rotate(120 50 50)"
+			></line>
 		</svg>
 	</div>
 	<div class="player-name" class:active-player={isActive}>

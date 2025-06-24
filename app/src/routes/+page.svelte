@@ -19,7 +19,7 @@
 			<span class="icon">📍</span>
 			{$location?.displayName || 'Loading Location...'}
 		</div>
-		<button on:click={handleResetClick} class="new-game-button">New game</button>
+		<button on:click={handleResetClick} class="new-game-button">New </button>
 	</header>
 
 	<GameBoard />
