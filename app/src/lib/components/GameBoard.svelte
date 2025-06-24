@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { gameState } from '$lib/stores/gameState';
+	import { gameState, resetGame } from '$lib/stores/gameState';
 	import PlayerPie from './PlayerPie.svelte';
 	import LocationSetup from './LocationSetup.svelte';
 	import QuestionCard from './QuestionCard.svelte';
@@ -44,8 +44,8 @@
 		<LocationSetup />
 	{:else if $gameState.gameStatus === 'playing'}
 		<div class="players-container">
-			<PlayerPie playerState={$gameState.players.player1} playerNumber={1} />
-			<PlayerPie playerState={$gameState.players.player2} playerNumber={2} />
+			<PlayerPie playerState={$gameState.players.player1} />
+			<PlayerPie playerState={$gameState.players.player2} />
 		</div>
 		<QuestionCard />
 		<div class="turn-indicator">
@@ -63,10 +63,7 @@
 						: $gameState.players.player2.name} wins!
 				</p>
 			{/if}
-			<button
-				on:click={() => ($gameState = { ...$gameState, gameStatus: 'setup', winner: undefined })}
-				>Play Again</button
-			>
+			<button on:click={resetGame}>Play Again</button>
 		</div>
 	{/if}
 </main>

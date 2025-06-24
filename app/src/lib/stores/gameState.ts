@@ -82,6 +82,10 @@ const initialGameState: GameState = {
 
 export const gameState = writable<GameState>(initialGameState);
 
+export function resetGame() {
+  gameState.set(initialGameState);
+}
+
 // Only attempt to load and save game state in the browser environment
 if (typeof window !== 'undefined') {
   // Initialize storage and then load game state

@@ -4,7 +4,6 @@
 	import { CATEGORY_LIST } from '$lib/utils/constants';
 
 	export let playerState: PlayerState;
-	export let playerNumber: 1 | 2;
 </script>
 
 <div class="player-pie">

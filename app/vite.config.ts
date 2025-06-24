@@ -4,6 +4,11 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
 	plugins: [sveltekit(), devtoolsJson()],
+	build: {
+		rollupOptions: {
+			external: ['@anthropic-ai/sdk']
+		}
+	},
 	test: {
 		projects: [
 			{
