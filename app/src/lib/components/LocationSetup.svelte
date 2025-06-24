@@ -17,62 +17,20 @@
 			let longitude: number;
 			let data: LocationData;
 
-			if (!navigator.geolocation) {
-				console.warn('Geolocation is not supported by this browser. Using mock location data.');
-				permissionStatus = 'unavailable';
-				latitude = 48.4284; // Default mock latitude
-				longitude = -123.3656; // Default mock longitude
-				data = {
-					latitude,
-					longitude,
-					city: 'Mock City',
-					region: 'Mock Region',
-					country: 'Mock Country',
-					displayName: `Mock City, Mock Region, Mock Country (Fallback)`
-				};
-				console.log('Using mock location data:', data);
-			} else {
-				try {
-					// Add timeout to geolocation request to prevent hanging
-					const position = await Promise.race([
-						new Promise<GeolocationPosition>((resolve, reject) => {
-							navigator.geolocation.getCurrentPosition(resolve, reject, {
-								timeout: 10000, // 10 second timeout
-								enableHighAccuracy: false,
-								maximumAge: 300000 // 5 minutes
-							});
-						}),
-						new Promise<never>((_, reject) => {
-							setTimeout(() => reject(new Error('Geolocation timeout')), 10000);
-						})
-					]);
-
-					latitude = position.coords.latitude;
-					longitude = position.coords.longitude;
-
-					const response = await fetch(`/api/reverse-geocode?lat=${latitude}&lng=${longitude}`);
-					if (!response.ok) {
-						throw new Error(`HTTP error! status: ${response.status}`);
-					}
-					data = await response.json();
-					console.log('Location obtained via geolocation:', data);
-				} catch (geoError) {
-					console.warn('Geolocation failed or timed out, using mock location data:', geoError);
-					// Fall back to mock data if geolocation fails
-					permissionStatus = 'unavailable';
-					latitude = 48.4284; // Default mock latitude
-					longitude = -123.3656; // Default mock longitude
-					data = {
-						latitude,
-						longitude,
-						city: 'Mock City',
-						region: 'Mock Region',
-						country: 'Mock Country',
-						displayName: `Mock City, Mock Region, Mock Country (Fallback)`
-					};
-					console.log('Using mock location data after geolocation failure:', data);
-				}
-			}
+			// Force mock location for testing purposes
+			console.warn('Forcing mock location data for testing.');
+			permissionStatus = 'unavailable'; // Treat as unavailable to use mock data
+			latitude = 48.4284; // Default mock latitude (Victoria, BC)
+			longitude = -123.3656; // Default mock longitude (Victoria, BC)
+			data = {
+				latitude,
+				longitude,
+				city: 'Victoria',
+				region: 'BC',
+				country: 'Canada',
+				displayName: `Victoria, BC, Canada (Mock)`
+			};
+			console.log('Using mock location data:', data);
 
 			location.set(data);
 			gameState.update((state) => ({
@@ -106,14 +64,15 @@
 	// Removed reactive statement as onMount handles initial call
 </script>
 
-<div class="location-setup">
+<div class="question-card">
 	{#if permissionStatus === 'prompt' || permissionStatus === 'unavailable'}
-		<h2>Welcome to Planet Trivia!</h2>
-		<p>To start the game, we need your location to generate local trivia questions.</p>
+		<p class="question-text">
+			To start the game, we need your location to generate local trivia questions.
+		</p>
 		{#if errorMessage}
-			<p class="error-message">{errorMessage}</p>
+			<p class="feedback-area incorrect">{errorMessage}</p>
 		{/if}
-		<button on:click={requestGeolocation} disabled={loadingLocation}>
+		<button on:click={requestGeolocation} disabled={loadingLocation} class="next-question-button">
 			{#if loadingLocation}
 				Getting Location...
 			{:else}
@@ -121,66 +80,12 @@
 			{/if}
 		</button>
 	{:else if permissionStatus === 'granted' && $location}
-		<h2>Location Set!</h2>
-		<p>Generating questions for: {$location.displayName}</p>
+		<p class="question-text">Location Set! Generating questions for: {$location.displayName}</p>
 		<!-- Game will transition to 'playing' state via gameState store update -->
 	{:else if permissionStatus === 'denied'}
-		<h2>Location Access Denied</h2>
-		<p>{errorMessage || 'Please enable location services in your browser settings to play.'}</p>
-		<button on:click={requestGeolocation}>Try Again</button>
+		<p class="question-text">
+			{errorMessage || 'Please enable location services in your browser settings to play.'}
+		</p>
+		<button on:click={requestGeolocation} class="next-question-button">Try Again</button>
 	{/if}
 </div>
-
-<style>
-	.location-setup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		text-align: center;
-		padding: 30px;
-		border: 1px solid #eee;
-		border-radius: 10px;
-		background-color: #fff;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-		max-width: 500px;
-		margin: 50px auto;
-	}
-
-	h2 {
-		color: #333;
-		margin-bottom: 15px;
-	}
-
-	p {
-		color: #666;
-		margin-bottom: 20px;
-		line-height: 1.5;
-	}
-
-	button {
-		background-color: #28a745;
-		color: white;
-		border: none;
-		padding: 12px 25px;
-		border-radius: 5px;
-		font-size: 1.1em;
-		cursor: pointer;
-		transition: background-color 0.3s ease;
-	}
-
-	button:hover:not(:disabled) {
-		background-color: #218838;
-	}
-
-	button:disabled {
-		background-color: #94d3a2;
-		cursor: not-allowed;
-	}
-
-	.error-message {
-		color: #dc3545;
-		font-weight: bold;
-		margin-top: 10px;
-	}
-</style>

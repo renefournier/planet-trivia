@@ -45,6 +45,7 @@ export interface GameState {
   usedQuestions: Set<string>; // Question IDs to prevent repeats
   gameStatus: 'setup' | 'playing' | 'finished';
   winner?: 1 | 2;
+  round: number;
 }
 
 const initialGameState: GameState = {
@@ -78,6 +79,7 @@ const initialGameState: GameState = {
   usedQuestions: new Set(),
   gameStatus: 'setup',
   winner: undefined,
+  round: 1,
 };
 
 export const gameState = writable<GameState>(initialGameState);

@@ -1,64 +1,99 @@
 <script lang="ts">
-	import type { PlayerState } from '$lib/stores/gameState';
-	import { getCategoryColor } from '$lib/utils/gameLogic';
-	import { CATEGORY_LIST } from '$lib/utils/constants';
+	import type { PlayerState, CategoryType } from '$lib/stores/gameState';
+	import { CATEGORIES } from '$lib/utils/constants';
+	import { getCategoryColor, getSegmentPath } from '$lib/utils/gameLogic';
 
 	export let playerState: PlayerState;
+	export let isActive: boolean = false;
 </script>
 
-<div class="player-pie">
-	<h3>{playerState.name}</h3>
-	<div class="pie-segments">
-		{#each CATEGORY_LIST as category}
-			<div
-				class="segment"
-				class:filled={playerState.pieSegments[category]}
-				style="background-color: {getCategoryColor(category)};"
-			>
-				{category.charAt(0).toUpperCase()}
-			</div>
-		{/each}
+<div class="player-section">
+	<div class="player-pie">
+		<svg viewBox="0 0 100 100" class="pie-chart">
+			<!-- Empty segments (outlines) -->
+			<circle
+				cx="50"
+				cy="50"
+				r="45"
+				fill="none"
+				stroke="var(--color-geography)"
+				stroke-width="10"
+				stroke-dasharray="15 85"
+				transform="rotate(-15 50 50)"
+			></circle>
+			<circle
+				cx="50"
+				cy="50"
+				r="45"
+				fill="none"
+				stroke="var(--color-entertainment)"
+				stroke-width="10"
+				stroke-dasharray="15 85"
+				transform="rotate(45 50 50)"
+			></circle>
+			<circle
+				cx="50"
+				cy="50"
+				r="45"
+				fill="none"
+				stroke="var(--color-history)"
+				stroke-width="10"
+				stroke-dasharray="15 85"
+				transform="rotate(105 50 50)"
+			></circle>
+			<circle
+				cx="50"
+				cy="50"
+				r="45"
+				fill="none"
+				stroke="var(--color-arts-literature)"
+				stroke-width="10"
+				stroke-dasharray="15 85"
+				transform="rotate(165 50 50)"
+			></circle>
+			<circle
+				cx="50"
+				cy="50"
+				r="45"
+				fill="none"
+				stroke="var(--color-science-nature)"
+				stroke-width="10"
+				stroke-dasharray="15 85"
+				transform="rotate(225 50 50)"
+			></circle>
+			<circle
+				cx="50"
+				cy="50"
+				r="45"
+				fill="none"
+				stroke="var(--color-sports-leisure)"
+				stroke-width="10"
+				stroke-dasharray="15 85"
+				transform="rotate(285 50 50)"
+			></circle>
+
+			<!-- Filled segments -->
+			{#each Object.entries(playerState.pieSegments) as [category, filled]}
+				{#if filled}
+					<path
+						class="segment filled"
+						class:geography={category === CATEGORIES.GEOGRAPHY}
+						class:entertainment={category === CATEGORIES.ENTERTAINMENT}
+						class:history={category === CATEGORIES.HISTORY}
+						class:arts-literature={category === CATEGORIES.ARTS}
+						class:science-nature={category === CATEGORIES.SCIENCE}
+						class:sports-leisure={category === CATEGORIES.SPORTS}
+						d={getSegmentPath(category as CategoryType)}
+					></path>
+				{/if}
+			{/each}
+		</svg>
 	</div>
-	<p>Segments Filled: {Object.values(playerState.pieSegments).filter(Boolean).length} / 6</p>
+	<div class="player-name" class:active-player={isActive}>
+		{playerState.name}
+	</div>
 </div>
 
 <style>
-	.player-pie {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 10px;
-		border: 1px solid #ccc;
-		padding: 15px;
-		border-radius: 8px;
-		width: 200px;
-	}
-
-	.pie-segments {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		grid-template-rows: repeat(2, 1fr);
-		gap: 5px;
-		width: 150px;
-		height: 100px;
-		border: 1px dashed #eee;
-		padding: 5px;
-	}
-
-	.segment {
-		width: 45px;
-		height: 45px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		color: white;
-		font-weight: bold;
-		border-radius: 50%; /* Make them circular */
-		opacity: 0.5; /* Unfilled state */
-	}
-
-	.segment.filled {
-		opacity: 1; /* Filled state */
-		border: 2px solid white;
-	}
+	/* Styles moved to planet-trivia.css */
 </style>

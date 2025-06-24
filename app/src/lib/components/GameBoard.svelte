@@ -1,11 +1,98 @@
 <script lang="ts">
 	import { gameState, resetGame } from '$lib/stores/gameState';
+	import { get } from 'svelte/store';
 	import PlayerPie from './PlayerPie.svelte';
 	import LocationSetup from './LocationSetup.svelte';
 	import QuestionCard from './QuestionCard.svelte';
 	import { currentQuestionCard } from '$lib/stores/questions';
 	import { location } from '$lib/stores/location';
-	import type { QuestionCard as QuestionCardType } from '$lib/stores/gameState';
+	import type { QuestionCard as QuestionCardType, CategoryType } from '$lib/stores/gameState';
+	import { CATEGORIES } from '$lib/utils/constants';
+	import { checkWinCondition } from '$lib/utils/gameLogic';
+	import { onMount } from 'svelte';
+	import { getCategoryColor } from '$lib/utils/gameLogic';
+	import { getSegmentPath } from '$lib/utils/gameLogic';
+	import { getCategoryDisplayName } from '$lib/utils/gameLogic';
+	import { getCategoryIcon } from '$lib/utils/gameLogic';
+	import { currentQuestion } from '$lib/stores/questions';
+	import { advanceTurn } from '$lib/utils/gameLogic';
+
+	let feedbackMessage: string = 'Answer the question above.';
+	let selectedAnswer: string | null = null;
+	let answeredCorrectly: boolean | null = null;
+
+	function handleAnswer(answer: string) {
+		const question = get(currentQuestion);
+		if (!question) return;
+
+		selectedAnswer = answer;
+		if (answer === question.correctAnswer) {
+			feedbackMessage = "✓ Correct! Player 1's turn";
+			answeredCorrectly = true;
+			// Update game state for correct answer
+			gameState.update((state) => {
+				const player = state.players[`player${state.currentPlayer}`];
+				if (question) {
+					player.pieSegments[question.category] = true;
+				}
+				// Check for win condition
+				if (checkWinCondition(player)) {
+					state.gameStatus = 'finished';
+					state.winner = state.currentPlayer;
+				}
+				return state;
+			});
+		} else {
+			feedbackMessage = `Incorrect. The correct answer was: ${question.correctAnswer}`;
+			answeredCorrectly = false;
+		}
+	}
+
+	function nextQuestion() {
+		const wasCorrect = answeredCorrectly;
+
+		feedbackMessage = 'Answer the question above.';
+		selectedAnswer = null;
+		answeredCorrectly = null;
+
+		gameState.update((state) => {
+			const question = get(currentQuestion);
+			const card = get(currentQuestionCard);
+			// Add current question to used questions
+			if (question) {
+				state.usedQuestions.add(question.id);
+			}
+
+			// Ensure answeredCorrectly is a boolean for advanceTurn
+			const wasAnswerCorrect = wasCorrect === true;
+			let nextPlayer: 1 | 2 = advanceTurn(state.currentPlayer, wasAnswerCorrect);
+			let nextQuestionIndex = state.currentQuestionIndex;
+
+			// If the current player answered correctly, advance to the next question on the card.
+			// If they answered incorrectly, the question remains the same for the next player.
+			if (wasAnswerCorrect) {
+				nextQuestionIndex++;
+			}
+
+			// If all questions on the card are exhausted, set currentCard to null to trigger new card generation
+			if (card && nextQuestionIndex >= card.questions.length) {
+				currentQuestionCard.set(null);
+				nextQuestionIndex = 0; // Reset index for new card
+			}
+
+			state.currentPlayer = nextPlayer;
+			state.currentQuestionIndex = nextQuestionIndex;
+
+			// Update current question based on new index and card
+			if (card && card.questions[state.currentQuestionIndex]) {
+				currentQuestion.set(card.questions[state.currentQuestionIndex]);
+			} else {
+				currentQuestion.set(null); // No more questions on this card or new card needed
+			}
+
+			return state;
+		});
+	}
 
 	async function generateNewQuestionCard(currentLocation: any, usedQuestionIds: Set<string>) {
 		try {
@@ -43,16 +130,30 @@
 	{#if $gameState.gameStatus === 'setup'}
 		<LocationSetup />
 	{:else if $gameState.gameStatus === 'playing'}
-		<div class="players-container">
-			<PlayerPie playerState={$gameState.players.player1} />
-			<PlayerPie playerState={$gameState.players.player2} />
+		<div class="scrollable-content">
+			<div class="player-pies-container">
+				<PlayerPie
+					playerState={$gameState.players.player1}
+					isActive={$gameState.currentPlayer === 1}
+				/>
+				<PlayerPie
+					playerState={$gameState.players.player2}
+					isActive={$gameState.currentPlayer === 2}
+				/>
+			</div>
+
+			<!-- Question Area -->
+			<QuestionCard {handleAnswer} {selectedAnswer} {answeredCorrectly} />
 		</div>
-		<QuestionCard />
-		<div class="turn-indicator">
-			Current Player: {$gameState.currentPlayer === 1
-				? $gameState.players.player1.name
-				: $gameState.players.player2.name}
-		</div>
+
+		<footer class="controls">
+			<div class="feedback-area">{feedbackMessage}</div>
+			<button
+				class="next-question-button"
+				on:click={nextQuestion}
+				disabled={selectedAnswer === null}>Next Question →</button
+			>
+		</footer>
 	{:else if $gameState.gameStatus === 'finished'}
 		<div class="game-finished">
 			<h2>Game Over!</h2>
@@ -63,33 +164,11 @@
 						: $gameState.players.player2.name} wins!
 				</p>
 			{/if}
-			<button on:click={resetGame}>Play Again</button>
+			<button on:click={resetGame} class="next-question-button">Play Again</button>
 		</div>
 	{/if}
 </main>
 
 <style>
-	.game-board {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: 20px;
-		gap: 20px;
-	}
-
-	.players-container {
-		display: flex;
-		justify-content: space-around;
-		width: 100%;
-		max-width: 800px;
-	}
-
-	.turn-indicator {
-		font-size: 1.5em;
-		margin-top: 20px;
-	}
-
-	.game-finished {
-		text-align: center;
-	}
+	/* Styles moved to planet-trivia.css */
 </style>

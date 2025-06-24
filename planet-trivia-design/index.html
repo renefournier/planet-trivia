@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Planet Trivia</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <header class="header">
+            <div class="app-title">
+                <span class="icon">🌍</span> Planet Trivia
+            </div>
+            <div class="location">
+                <span class="icon">📍</span> Victoria, BC
+            </div>
+        </header>
+
+        <!-- Game Board Section -->
+        <main class="game-board">
+            <div class="player-pies-container">
+                <!-- Player 1 Pie -->
+                <div class="player-section">
+                    <div class="player-pie">
+                        <svg viewBox="0 0 100 100" class="pie-chart">
+                            <!-- Empty segments (outlines) -->
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-geography)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(-15 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-entertainment)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(45 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-history)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(105 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-arts-literature)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(165 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-science-nature)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(225 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-sports-leisure)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(285 50 50)"></circle>
+                            
+                            <!-- Filled segments (example: Geography and Entertainment filled) -->
+                            <path class="segment filled geography" d="M50,50 L50,5 A45,45 0 0,1 88.97,26.03 Z"></path>
+                            <path class="segment filled entertainment" d="M50,50 L88.97,26.03 A45,45 0 0,1 88.97,73.97 Z"></path>
+                        </svg>
+                    </div>
+                    <div class="player-name active-player">Player 1</div>
+                </div>
+
+                <!-- Player 2 Pie -->
+                <div class="player-section">
+                    <div class="player-pie">
+                        <svg viewBox="0 0 100 100" class="pie-chart">
+                            <!-- Empty segments (outlines) -->
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-geography)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(-15 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-entertainment)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(45 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-history)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(105 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-arts-literature)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(165 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-science-nature)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(225 50 50)"></circle>
+                            <circle cx="50" cy="50" r="45" fill="none" stroke="var(--color-sports-leisure)" stroke-width="10" stroke-dasharray="15 85" transform="rotate(285 50 50)"></circle>
+                            
+                            <!-- Filled segments (example: History filled) -->
+                            <path class="segment filled history" d="M50,50 L88.97,73.97 A45,45 0 0,1 50,95 Z"></path>
+                        </svg>
+                    </div>
+                    <div class="player-name">Player 2</div>
+                </div>
+            </div>
+
+            <!-- Question Area -->
+            <div class="question-card">
+                <div class="category-indicator geography">Geography</div>
+                <p class="question-text">What body of water separates the Arabian Peninsula from the Horn of Africa?</p>
+                <div class="options-grid">
+                    <button class="option-button">A) Red Sea</button>
+                    <button class="option-button">B) Arabian Sea</button>
+                    <button class="option-button">C) Persian Gulf</button>
+                    <button class="option-button">D) Gulf of Aden</button>
+                </div>
+                <div class="round-counter">Round 3</div>
+            </div>
+        </main>
+
+        <!-- Control Section -->
+        <footer class="controls">
+            <div class="feedback-area">✓ Correct! Player 1's turn</div>
+            <button class="next-question-button">Next Question →</button>
+        </footer>
+    </div>
+</body>
+</html>
