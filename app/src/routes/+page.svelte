@@ -2,6 +2,7 @@
 	import GameBoard from '$lib/components/GameBoard.svelte';
 	import { location } from '$lib/stores/location';
 	import { resetGame } from '$lib/stores/gameState';
+	import '../app.css'; // Import the global styles
 
 	function handleResetClick() {
 		if (confirm('Start over?')) {
