@@ -8,8 +8,8 @@ A SvelteKit webapp that generates location-specific Trivial Pursuit questions us
 - **Frontend:** SvelteKit with TypeScript
 - **Backend:** Node.js API endpoint
 - **Storage:** Svelte stores backed by localforage (IndexedDB)
-- **AI:** Inexpensive AI model (OpenAI GPT-3.5-turbo or Anthropic Claude Haiku)
-- **Geolocation:** Browser Geolocation API + reverse geocoding
+- **AI:** Anthropic Claude Haiku
+- **Geolocation:** Browser Geolocation API + OpenStreetMap Nominatim (reverse geocoding)
 - **Deployment:** Netlify
 
 ### Core Game Mechanics
