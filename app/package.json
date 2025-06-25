@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.54.0",
 		"bulma": "^1.0.4",
+		"geoip-lite": "^1.4.10",
 		"localforage": "^1.10.0"
 	}
 }

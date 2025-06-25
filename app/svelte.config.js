@@ -3,7 +3,16 @@ import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 const config = {
 	preprocess: vitePreprocess(),
-	kit: { adapter: adapter() }
+	kit: {
+		adapter: adapter(),
+		vite: {
+			build: {
+				rollupOptions: {
+					external: ['geoip-lite']
+				}
+			}
+		}
+	}
 };
 
 export default config;
