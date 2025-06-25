@@ -18,13 +18,10 @@ export function checkWinCondition(playerState: PlayerState): boolean {
  */
 export function advanceTurn(currentPlayer: 1 | 2, answeredCorrectly: boolean): 1 | 2 {
   if (answeredCorrectly) {
-    // If current player answered correctly, next turn goes to the other player
-    return currentPlayer === 1 ? 2 : 1;
+    // If current player answered correctly, they keep playing
+    return currentPlayer;
   } else {
-    // If current player answered incorrectly, the other player attempts the same question
-    // So, the turn effectively stays with the current player for the next attempt,
-    // but for the purpose of advancing the game loop, we switch to the other player
-    // to give them a chance at the same question.
+    // If current player answered incorrectly, switch to the other player
     return currentPlayer === 1 ? 2 : 1;
   }
 }
