@@ -42,6 +42,7 @@
 	},
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.54.0",
+		"bulma": "^1.0.4",
 		"localforage": "^1.10.0"
 	}
 }
