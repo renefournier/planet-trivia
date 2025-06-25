@@ -3,6 +3,10 @@
     "@anthropic-ai/sdk": "^0.54.0",
     "@types/node": "^24.0.4",
     "bulma": "^1.0.4",
+    "geoip-lite": "^1.4.10",
     "localforage": "^1.10.0"
+  },
+  "devDependencies": {
+    "@types/geoip-lite": "^1.4.4"
   }
 }
