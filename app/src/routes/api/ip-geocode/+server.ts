@@ -10,7 +10,8 @@ export const GET: RequestHandler = async ({ request }) => {
     // To test local geolocation, we can use a mock IP for Victoria, BC.
     const hostHeader = request.headers.get('host');
     const isLocalhost = hostHeader && (hostHeader.startsWith('localhost:') || hostHeader === 'localhost' || hostHeader === '127.0.0.1' || hostHeader === '::1');
-    const ip = isLocalhost ? '24.84.0.0' : request.headers.get('x-forwarded-for') || request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip');
+    // Netlify provides the client IP in 'x-nf-client-connection-ip'
+    const ip = isLocalhost ? '24.84.0.0' : request.headers.get('x-nf-client-connection-ip') || request.headers.get('x-forwarded-for') || request.headers.get('cf-connecting-ip') || request.headers.get('x-real-ip');
 
     if (!ip) {
       // Fallback to London if IP cannot be determined
