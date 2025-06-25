@@ -1,12 +1,18 @@
+<!-- src/lib/components/LocationSetup.svelte -->
+
 <script lang="ts">
-	import { onMount } from 'svelte'; // Import onMount
+	import { onMount } from 'svelte';
+	import { dev } from '$app/environment';
 	import { location } from '$lib/stores/location';
 	import { gameState } from '$lib/stores/gameState';
 	import type { LocationData } from '$lib/stores/gameState';
 
 	let permissionStatus: 'prompt' | 'granted' | 'denied' | 'unavailable' = 'prompt';
 	let errorMessage: string | null = null;
-	let loadingLocation = false;
+	let loadingLocation = !$location; // Initialize based on whether location is already set
+
+	// Development flag to enable/disable mock location
+	const USE_MOCK_LOCATION = dev && false; // Set to false to use real location in dev
 
 	async function requestGeolocation() {
 		loadingLocation = true;
@@ -17,20 +23,76 @@
 			let longitude: number;
 			let data: LocationData;
 
-			// Force mock location for testing purposes
-			console.warn('Forcing mock location data for testing.');
-			permissionStatus = 'unavailable'; // Treat as unavailable to use mock data
-			latitude = 48.4284; // Default mock latitude (Victoria, BC)
-			longitude = -123.3656; // Default mock longitude (Victoria, BC)
-			data = {
-				latitude,
-				longitude,
-				city: 'Victoria',
-				region: 'BC',
-				country: 'Canada',
-				displayName: `Victoria, BC, Canada (Mock)`
-			};
-			console.log('Using mock location data:', data);
+			// Use mock location only in development when flag is enabled
+			if (USE_MOCK_LOCATION) {
+				console.warn('Using mock location data for development.');
+				latitude = 48.4284; // Default mock latitude (Victoria, BC)
+				longitude = -123.3656; // Default mock longitude (Victoria, BC)
+				data = {
+					latitude,
+					longitude,
+					city: 'Victoria',
+					region: 'BC',
+					country: 'Canada',
+					displayName: `Victoria, BC, Canada (Mock)`
+				};
+				console.log('Mock location data:', data);
+			} else {
+				// Use real geolocation
+				console.log('Requesting real geolocation...');
+				const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+					if (!navigator.geolocation) {
+						reject(new Error('Geolocation is not supported by this browser.'));
+						return;
+					}
+
+					const timeoutId = setTimeout(() => {
+						reject(new Error('Geolocation request timed out'));
+					}, 15000); // 15 second timeout
+
+					navigator.geolocation.getCurrentPosition(
+						(pos) => {
+							clearTimeout(timeoutId);
+							resolve(pos);
+						},
+						(err) => {
+							clearTimeout(timeoutId);
+							reject(err);
+						},
+						{
+							enableHighAccuracy: false, // Changed to false for faster response
+							timeout: 10000,
+							maximumAge: 300000 // 5 minutes
+						}
+					);
+				});
+
+				latitude = position.coords.latitude;
+				longitude = position.coords.longitude;
+				console.log('Got coordinates:', { latitude, longitude });
+
+				// Get location details via reverse geocoding
+				console.log('Fetching location details...');
+				const response = await fetch(`/api/reverse-geocode?lat=${latitude}&lng=${longitude}`);
+				if (!response.ok) {
+					throw new Error(`Failed to get location details: ${response.statusText}`);
+				}
+
+				const locationDetails = await response.json();
+				if (locationDetails.error) {
+					throw new Error(locationDetails.error);
+				}
+
+				data = {
+					latitude,
+					longitude,
+					city: locationDetails.city,
+					region: locationDetails.region,
+					country: locationDetails.country,
+					displayName: locationDetails.displayName
+				};
+				console.log('Real location data:', data);
+			}
 
 			location.set(data);
 			gameState.update((state) => ({
@@ -40,14 +102,16 @@
 			}));
 			permissionStatus = 'granted';
 		} catch (error: any) {
+			console.error('Geolocation request failed:', error);
 			permissionStatus = 'denied';
-			if (error.code === error.PERMISSION_DENIED) {
+			if (error.code === 1 || error.code === error.PERMISSION_DENIED) {
 				errorMessage =
 					'Geolocation permission denied. Please enable location services for this site.';
+			} else if (error.message?.includes('timeout')) {
+				errorMessage = 'Location request timed out. Please try again or check your connection.';
 			} else {
 				errorMessage = `Error getting location: ${error.message}`;
 			}
-			console.error('Geolocation request failed:', errorMessage, error);
 		} finally {
 			loadingLocation = false;
 		}
