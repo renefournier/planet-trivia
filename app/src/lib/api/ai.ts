@@ -170,7 +170,7 @@ Requirements:
 - Avoid overly obscure details that require internet search
 - Provide 4 multiple choice options per question
 - Focus on ${location.city}, ${location.region}, ${location.country} but can include nearby areas
-- Make questions engaging and varied in difficulty
+- Make questions engaging and a bit harder, leaning towards medium to hard difficulty
 - Return the category for each question as a simplified key: 'geography', 'entertainment', 'history', 'arts', 'science', 'sports'.
 - The 'answer' field should be the index of the correct choice in the 'choices' array.
 

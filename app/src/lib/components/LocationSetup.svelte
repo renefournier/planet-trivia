@@ -12,9 +12,10 @@
 	let errorMessage: string | null = null;
 	let loadingLocation = !$location; // Initialize based on whether location is already set
 
-	// Development flag to enable/disable mock location
-	const USE_MOCK_LOCATION = dev && false; // Set to false to use real location in dev
-
+	// Development flag to force Victoria, BC, Canada as location.
+	// Set this to `true` in development to bypass GeoIP.
+	let FORCE_VICTORIA = true;
+	const USE_MOCK_LOCATION = dev && FORCE_VICTORIA;
 	async function getIpGeolocation(): Promise<LocationData | null> {
 		try {
 			console.log('Requesting IP geolocation...');
